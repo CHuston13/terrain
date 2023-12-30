@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terrain Generator</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="terrainCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('terrainCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const canvasWidth = window.innerWidth;
+    const canvasHeight = window.innerHeight;
+
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+
+    // Function to generate random terrain data with mountains
+    function generateTerrain() {
+      const terrain = [];
+      const frequency = 0.02; // Adjust this value to change the terrain frequency
+      const amplitude = canvasHeight * 0.5; // Adjust this value to change the terrain height
+      const mountainFrequency = 0.01; // Adjust this value to control the frequency of mountains
+      const mountainAmplitude = canvasHeight * 0.3; // Adjust this value to control the height of mountains
+
+      for (let x = 0; x < canvasWidth; x++) {
+        const noise = Math.random() * 2 - 1;
+        const mountainNoise = Math.sin(x * mountainFrequency) * mountainAmplitude;
+
+        const y = canvasHeight * 0.5 + noise * amplitude + mountainNoise;
+        terrain.push(y);
+      }
+
+      return terrain;
+    }
+
+    // Function to draw terrain on the canvas
+    function drawTerrain(terrain) {
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+      ctx.beginPath();
+      ctx.moveTo(0, terrain[0]);
+
+      for (let x = 1; x < terrain.length; x++) {
+        ctx.lineTo(x, terrain[x]);
+      }
+
+      ctx.lineTo(canvasWidth, canvasHeight);
+      ctx.lineTo(0, canvasHeight);
+      ctx.closePath();
+
+      ctx.fillStyle = '#8BC34A'; // Adjust this color based on your preference
+      ctx.fill();
+    }
+
+    // Generate and draw initial terrain
+    const initialTerrain = generateTerrain();
+    drawTerrain(initialTerrain);
+
+    // Regenerate terrain on window resize
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const newTerrain = generateTerrain();
+      drawTerrain(newTerrain);
+    });
+  </script>
+</body>
+</html>
