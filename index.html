@@ -13,14 +13,26 @@
     canvas {
       display: block;
     }
+
+    #refreshButton {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <canvas id="terrainCanvas"></canvas>
+  <div id="refreshButton">Refresh Terrain</div>
 
   <script>
     const canvas = document.getElementById('terrainCanvas');
     const ctx = canvas.getContext('2d');
+    const refreshButton = document.getElementById('refreshButton');
 
     const canvasWidth = window.innerWidth;
     const canvasHeight = window.innerHeight;
@@ -28,7 +40,7 @@
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
-    // Function to generate random terrain data with mountains
+    // Function to generate diverse random terrain data with mountains
     function generateTerrain() {
       const terrain = [];
       const frequency = 0.02; // Adjust this value to change the terrain frequency
@@ -47,9 +59,14 @@
       return terrain;
     }
 
-    // Function to draw terrain on the canvas
+    // Function to draw diverse terrain on the canvas
     function drawTerrain(terrain) {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
+      gradient.addColorStop(0, '#3E4095'); // Deep blue
+      gradient.addColorStop(0.5, '#44C5FF'); // Sky blue
+      gradient.addColorStop(1, '#8BC34A'); // Grass green
 
       ctx.beginPath();
       ctx.moveTo(0, terrain[0]);
@@ -62,13 +79,19 @@
       ctx.lineTo(0, canvasHeight);
       ctx.closePath();
 
-      ctx.fillStyle = '#8BC34A'; // Adjust this color based on your preference
+      ctx.fillStyle = gradient;
       ctx.fill();
     }
 
     // Generate and draw initial terrain
     const initialTerrain = generateTerrain();
     drawTerrain(initialTerrain);
+
+    // Regenerate terrain on button click
+    refreshButton.addEventListener('click', () => {
+      const newTerrain = generateTerrain();
+      drawTerrain(newTerrain);
+    });
 
     // Regenerate terrain on window resize
     window.addEventListener('resize', () => {
